@@ -213,7 +213,7 @@ function CargarPrd(PrdsCliente, tmp) {
             <td>${PrdsCliente[i].fabricante}</td> 
             <td>${PrdsCliente[i].nobasico}</td> 
             <td>${PrdsCliente[i].descripcion}</td> 
-            <td>${PrdsCliente[i].ult_vta}</a></td>
+            <td>${PrdsCliente[i].ult_vta.split('T')[0]}</a></td>
             <td>${PrdsCliente[i].vta19}</a></td>
             <td>${PrdsCliente[i].vta20}</a></td>
             <td>${PrdsCliente[i].vta_30d}</a></td>
