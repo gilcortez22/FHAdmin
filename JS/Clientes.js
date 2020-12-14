@@ -11,9 +11,10 @@ let id;
 var cliDataUsr = [];
 var cliDataPrd = [];
 var itmCount = 0;
-
+var URI = "http://localhost:3000/";
+//var URI = "http://192.168.0.250:3000/";
+var esSupr = 0;
 $(document).ready(function () {
-    // console.log('Funciona');
     //mutear enter key
     $('#search').bind('keydown', function (e) {
         if (e.keyCode == 13) {
@@ -33,15 +34,23 @@ $(document).ready(function () {
 
     $('#search').keyup(function (e) {
         var filteredDataCli = [];
-
         let value = $('#search').val();
         for (var i = 0; i < cliDataUsr.length; i++) {
             value = value.toLowerCase();
             var name = cliDataUsr[i].cliente.toLowerCase()
             var cod = String(cliDataUsr[i].cod_cliente)
+            var ges = String(cliDataUsr[i].gestor).toLowerCase()
+            
+            if (esSupr==1){
+                
+                if (name.includes(value) || cod.includes(value)|| ges.includes(value)) {
+                    filteredDataCli.push(cliDataUsr[i])
+                }
+            }else{
             if (name.includes(value) || cod.includes(value)) {
                 filteredDataCli.push(cliDataUsr[i])
             }
+        }
         }
         tmp = 0;
         CliTable(filteredDataCli, variableTwo, search, tmp);
@@ -62,7 +71,6 @@ $(document).ready(function () {
                 filteredDataPrd.push(cliDataPrd[i])
             }
         }
-        //console.log(filteredDataPrd)
         tmp = 0;
         CargarPrd(filteredDataPrd, tmp);
         //Cierra Ready
@@ -74,14 +82,26 @@ $(document).ready(function () {
 });
 
 function loadClientes() {
-    $.get("http://localhost:3000/ShowCli", function (response, status) {
+
+    $.get(URI + 'ShowCli', function (response, status) {
         DataUsr = JSON.parse(JSON.stringify(response));
 
+        evaluarSuper();
         for (var i = 0; i < DataUsr.length; i++) {
-            if (DataUsr[i].plugestor == variableTwo) {
-                cliDataUsr.push(DataUsr[i]);
+
+            if (esSupr == 1) {
+                if (DataUsr[i].plug_cc == variableTwo) {
+                    cliDataUsr.push(DataUsr[i]);
+                }
+            } else {
+                
+                if (DataUsr[i].plugestor == variableTwo) {
+                    cliDataUsr.push(DataUsr[i]);
+
+                }
             }
             cliDataUsr = JSON.parse(JSON.stringify(cliDataUsr));
+
         }
         tmp = 0;
     });
@@ -91,7 +111,7 @@ function loadProductos(cliPro) {
 
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:3000/ShowPrd',
+        url: URI + 'ShowPrd',
         crossDomain: true,
         data: { search: cliPro },
         dataType: 'json',
@@ -108,8 +128,15 @@ function loadProductos(cliPro) {
 
 };
 
+$(document).on('click', '#gestionar', function () {
+    let element = $(this)[0].parentElement.parentElement.parentElement.parentElement;
+    id = $(element).attr('codTienda');
+    var w =     window.open("gestion.php?var="+id , "Gestion Cliente" , "width=900,height=500");
+    w.codClienteW = thisIsAnObject;
 
-$(document).on('click', '.btn', function () {
+});
+
+$(document).on('click', '#ver', function () {
     let element = $(this)[0].parentElement.parentElement.parentElement.parentElement;
     id = $(element).attr('codTienda');
     tmp = 1;
@@ -134,50 +161,65 @@ function hidesearch() {
 
 
 function CliTable(usrs, search, tmp) {
-    template = '';
+    template='';
+    dibujaheader();
     itmCount = 0;
     for (var i = 0; i < usrs.length; i++) {
         if (tmp == 0) {
-            template += `<tr codTienda="${usrs[i].cod_cliente}">
-        <td>${usrs[i].cod_cliente}</td> 
+            template += `<tr codTienda="${usrs[i].cod_cliente}">`
+            if (esSupr == 1) {
+                template += `<td>${usrs[i].gestor}</td>`;
+            }
+            template += `<td>${usrs[i].cod_cliente}</td> 
         <td>${usrs[i].cliente}</a></td>
         <td>${usrs[i].nombrecomercial}</a></td>
         <td>${usrs[i].ultima_vta.split('T')[0]}</a></td>
         <td>
-        <div class = "row">
-        <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver">Ver</button></div>
-        <div class = "col"><button class="btnn btn-sm btn-danger btn-block" type="button" disabled onclick="myFunctionb()" id="regresar">Regresar</button></div>
-        </div>
-        </td>
-        </tr>`;
+                <div class = "row">
+                <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" >Productos</button></div>
+                <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar" disabled>Regresar</button></div>`;
+                if (esSupr == 1) {
+                    template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
+                }
+                template +=
+                `</div>
+                </td>
+                </tr>`;
 
             document.getElementById("search").disabled = false;
             itmCount = itmCount + 1;
-            if (i === 5) { break; }
+            if (i === 5 && esSupr ==0) { break; }
         } else {
             if (parseInt(usrs[i].cod_cliente) == parseInt(search)) {
 
-                template += `<tr codTienda="${usrs[i].cod_cliente}">
-                <td>${usrs[i].cod_cliente}</td> 
-                <td>${usrs[i].cliente}</a></td>
+                template += `<tr codTienda="${usrs[i].cod_cliente}">`
+                if (esSupr == 1) {
+                    template += `<td>${usrs[i].gestor}</td>`;
+                }
+                template += `<td>${usrs[i].cod_cliente}</td> 
+            <td>${usrs[i].cliente}</a></td>
                 <td>${usrs[i].nombrecomercial}</a></td>
                 <td>${usrs[i].ultima_vta.split('T')[0]}</a></td>
                 <td>
                 <div class = "row">
-                <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" disabled>Ver</button></div>
-                <div class = "col"><button class="btnn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar">Regresar</button></div>
-                </div>
+                <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" disabled>Productos</button></div>
+                <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar">Regresar</button></div>`;
+                if (esSupr == 1) {
+                    template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
+                }
+                template +=
+                `</div>
                 </td>
                 </tr>`;
 
                 document.getElementById("search").disabled = true;
                 itmCount = itmCount + 1;
-                if (i === 5) { break; }
+                if (i === 5 && esSupr==0) { break; }
             }
 
         };
     };
-
+    template += `</table>`
     $('#container').html(template);
 };
 
@@ -226,32 +268,7 @@ function CargarPrd(PrdsCliente, tmp) {
         itmCount = itmCount + 1;
     };
 
-    /*
-        
-            prds.forEach(prds => {
-                if (parseInt(prds["cod_cliente"]) == parseInt(CodCliente)) {
-
-               
-
-                };
-            });
-
-        }else {
-            Productos.forEach(Productos => {
-
-                template2 += ` <tr codProducto="${Productos["nobasico"]}">
-                <td>${Productos["fabricante"]}</td> 
-                <td>${Productos["nobasico"]}</td> 
-                <td>${Productos["descripcion"]}</td> 
-                <td>${Productos["actual"]}</a></td>
-                <td>${Productos["reciente"]}</a></td>
-                <td>${Productos["existencia"]}</a></td>
-                </tr>`;
-
-            });
-
-        }  
-*/
+    
     template2 += `</table>`;
     $('#container2').html(template2);
 
@@ -271,4 +288,54 @@ function myFunctionb() {
 
 
 
+function evaluarSuper() {
+    if (variableTwo == 690 || variableTwo == 691 || variableTwo == 695) {
 
+        esSupr = 1;
+    } else {
+
+        esSupr = 0;
+    };
+
+    
+}
+function dibujaheader() {
+    if (esSupr == 1) {
+        template += `
+    <table id="Clientes" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+    
+    <th class="th-sm text-center" style="width: 9%" scope="col">Gestor
+        </th>
+      <th class="th-sm text-center" style="width: 3.5%" scope="col">Id Cliente
+      </th>
+      <th class="th-sm text-center" style="width: 20%" scope="col">Cliente
+      </th>
+      <th class="th-sm text-center" style="width: 20%" scope="col">Nombre Comercial
+      </th>
+      <th class="th-sm text-center" style="width: 5%" scope="col">Última Venta
+      </th>
+      <th class="th-sm text-center" style="width: 25%" scope="col" >Función
+      </th>
+    </tr>
+  </thead>`;
+    } else {
+        template += `
+    <table id="Clientes" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+    <th class="th-sm text-center" style="width: 5%" scope="col">Id Cliente
+    </th>
+    <th class="th-sm text-center" style="width: 25%" scope="col">Cliente
+    </th>
+    <th class="th-sm text-center" style="width: 25%" scope="col">Nombre Comercial
+    </th>
+    <th class="th-sm text-center" style="width: 10%" scope="col">Última Venta
+    </th>
+    <th class="th-sm text-center" style="width: 20%" scope="col" >Función
+    </th>
+    </tr>
+  </thead>`;
+    }
+}

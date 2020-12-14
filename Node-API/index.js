@@ -4,6 +4,7 @@ let Sybase = require("sybase")
 let bodyParser = require("body-parser")
 
 let db = new Sybase("127.0.0.1", 2638, "admin3", "gilberto", "sql");
+//let db = new Sybase("192.168.0.233", 2638, "FH", "gilberto", "sql");
 
 app.use(express.urlencoded({ extended:true}));
 
@@ -34,12 +35,28 @@ app.get("/ShowCli", (request, response) => {
   response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   response.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
 
-  db.query("select distinct * from tbl_clientes where gestor <> 'NULO'", (error, data) => {
+  db.query("select distinct cl.*,plug_cc from tbl_clientes cl join tbl_cc_d2d cc on cl.plugestor = cc.plugestor where gestor <> 'NULO'", (error, data) => {
     if (error) throw error;
     response.json(data);
   });
 
 });
+
+
+app.get("/GetCli", (request, response) => {
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  response.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+
+  db.query("select * from tbl_datos_cliente", (error, data) => {
+    if (error) throw error;
+    response.json(data);
+  });
+
+});
+
+
 
 app.get("/ShowPrd", (request, response) => {
   response.header('Access-Control-Allow-Origin', '*');
