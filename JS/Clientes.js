@@ -12,9 +12,18 @@ var cliDataUsr = [];
 var cliDataPrd = [];
 var itmCount = 0;
 var URI = "http://localhost:3000/";
+let selectedW = "";
+let selectedD = "";
+var week = selectedW.toUpperCase();
+var day = selectedD.toUpperCase();
+var filteredDataCli = [];
 //var URI = "http://192.168.0.250:3000/";
 var esSupr = 0;
+let value = $('#search').val();
+
 $(document).ready(function () {
+
+    showDdl();
     //mutear enter key
     $('#search').bind('keydown', function (e) {
         if (e.keyCode == 13) {
@@ -32,29 +41,31 @@ $(document).ready(function () {
 
     hidesearch();
 
-    $('#search').keyup(function (e) {
-        var filteredDataCli = [];
-        let value = $('#search').val();
-        for (var i = 0; i < cliDataUsr.length; i++) {
-            value = value.toLowerCase();
-            var name = cliDataUsr[i].cliente.toLowerCase()
-            var cod = String(cliDataUsr[i].cod_cliente)
-            var ges = String(cliDataUsr[i].gestor).toLowerCase()
+
+    $('#ddlDia').on('change', function () {
+        //$('#ddlDia').change(function(){
+        selectedD = $(this).find('option:selected').text();
+        if(selectedD == 'Día') {
+            selectedD='';
+        }
+        recorrerJSON(cliDataUsr);
+    });
+
+    $('#ddlSemana').on('change', function () {
+        //$('#ddlDia').change(function(){
             
-            if (esSupr==1){
-                
-                if (name.includes(value) || cod.includes(value)|| ges.includes(value)) {
-                    filteredDataCli.push(cliDataUsr[i])
-                }
-            }else{
-            if (name.includes(value) || cod.includes(value)) {
-                filteredDataCli.push(cliDataUsr[i])
-            }
+        selectedW = $(this).find('option:selected').text();
+        if(selectedW == 'Semana') {
+            selectedW='';
         }
-        }
-        tmp = 0;
-        CliTable(filteredDataCli, variableTwo, search, tmp);
-        //Cierra Ready
+        recorrerJSON(cliDataUsr);
+    });
+
+
+    $('#search').keyup(function (e) {
+        value = $('#search').val();
+        value = value.toLowerCase();
+        recorrerJSON(cliDataUsr);
     })
 
     $('#search2').keyup(function (e) {
@@ -78,15 +89,17 @@ $(document).ready(function () {
 
 
 
-
+    // Fin Ready
 });
 
 function loadClientes() {
 
+    evaluarSuper();
     $.get(URI + 'ShowCli', function (response, status) {
+        
         DataUsr = JSON.parse(JSON.stringify(response));
 
-        evaluarSuper();
+
         for (var i = 0; i < DataUsr.length; i++) {
 
             if (esSupr == 1) {
@@ -94,7 +107,7 @@ function loadClientes() {
                     cliDataUsr.push(DataUsr[i]);
                 }
             } else {
-                
+
                 if (DataUsr[i].plugestor == variableTwo) {
                     cliDataUsr.push(DataUsr[i]);
 
@@ -106,6 +119,17 @@ function loadClientes() {
         tmp = 0;
     });
 }
+
+
+
+$(document).on('click', '#gestionar', function () {
+    let thisIsAnObject;
+    let element = $(this)[0].parentElement.parentElement.parentElement.parentElement;
+    id = $(element).attr('codTienda');
+    var w = window.open("gestion.php?var=" + id, "Gestion Cliente", "width=900,height=500");
+    w.codClienteW = thisIsAnObject;
+
+});
 
 function loadProductos(cliPro) {
 
@@ -121,20 +145,11 @@ function loadProductos(cliPro) {
             CargarPrd(cliDataPrd, tmp2);
         },
         error: function (response) {
-            console.log('POST failed.');
         }
     })
     tmp2 = 0;
 
 };
-
-$(document).on('click', '#gestionar', function () {
-    let element = $(this)[0].parentElement.parentElement.parentElement.parentElement;
-    id = $(element).attr('codTienda');
-    var w =     window.open("gestion.php?var="+id , "Gestion Cliente" , "width=900,height=500");
-    w.codClienteW = thisIsAnObject;
-
-});
 
 $(document).on('click', '#ver', function () {
     let element = $(this)[0].parentElement.parentElement.parentElement.parentElement;
@@ -150,6 +165,7 @@ $(document).on('click', '#ver', function () {
 
 });
 
+
 function hidesearch() {
     var x = document.getElementById("search2");
     if (x.style.display === "none") {
@@ -161,7 +177,7 @@ function hidesearch() {
 
 
 function CliTable(usrs, search, tmp) {
-    template='';
+    template = '';
     dibujaheader();
     itmCount = 0;
     for (var i = 0; i < usrs.length; i++) {
@@ -178,17 +194,17 @@ function CliTable(usrs, search, tmp) {
                 <div class = "row">
                 <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" >Productos</button></div>
                 <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar" disabled>Regresar</button></div>`;
-                if (esSupr == 1) {
-                    template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
-                }
-                template +=
+            if (esSupr == 1) {
+                template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
+            }
+            template +=
                 `</div>
                 </td>
                 </tr>`;
 
             document.getElementById("search").disabled = false;
             itmCount = itmCount + 1;
-            if (i === 5 && esSupr ==0) { break; }
+            if (i === 5 && esSupr == 0) { break; }
         } else {
             if (parseInt(usrs[i].cod_cliente) == parseInt(search)) {
 
@@ -208,13 +224,13 @@ function CliTable(usrs, search, tmp) {
                     template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
                 }
                 template +=
-                `</div>
+                    `</div>
                 </td>
                 </tr>`;
 
                 document.getElementById("search").disabled = true;
                 itmCount = itmCount + 1;
-                if (i === 5 && esSupr==0) { break; }
+                if (i === 5 && esSupr == 0) { break; }
             }
 
         };
@@ -268,7 +284,7 @@ function CargarPrd(PrdsCliente, tmp) {
         itmCount = itmCount + 1;
     };
 
-    
+
     template2 += `</table>`;
     $('#container2').html(template2);
 
@@ -297,7 +313,7 @@ function evaluarSuper() {
         esSupr = 0;
     };
 
-    
+
 }
 function dibujaheader() {
     if (esSupr == 1) {
@@ -338,4 +354,90 @@ function dibujaheader() {
     </tr>
   </thead>`;
     }
+}
+
+function getSemana() {
+
+
+
+    if (moment().week() % 2 == 1) {
+        selectedW = "Semana " + (((moment().week() % 2 == 1) - 2) * -1)
+    }
+    else {
+        selectedW = "Semana " + (((moment().week() % 2 == 1) - 2) * -1)
+    }
+}
+
+function getDia() {
+    var d = new Date();
+    var weekday = new Array(5);
+    weekday[1] = "Lunes";
+    weekday[2] = "Martes";
+    weekday[3] = "Miercoles";
+    weekday[4] = "Jueves";
+    weekday[5] = "Viernes";
+
+    selectedD = weekday[d.getDay()];
+};
+
+
+function showDdl() {
+    getDia();
+    getSemana();
+    templateDdl = `
+    <select class="browser-default custom-select" id ="ddlSemana">
+    <option selected="">Semana</option>
+    <option value="1">Semana 1</option>
+    <option value="2">Semana 2</option>
+    <option value="3">Reactivar</option>
+    
+  </select>
+<select class="browser-default custom-select" id ="ddlDia">
+    <option selected="">Día</option>
+    <option value="1">Lunes</option>
+    <option value="2">Martes</option>
+    <option value="3">Miercoles</option>
+    <option value="4">Jueves</option>
+    <option value="5">Viernes</option>
+  </select>`;
+
+    $('#ddl').html(templateDdl);
+
+}
+
+
+
+function recorrerJSON(cliDataUsr)
+{
+    filteredDataCli = [];
+        
+    week = selectedW.toUpperCase();
+day = selectedD.toUpperCase();
+    for (var i = 0; i < cliDataUsr.length; i++) {
+        
+        var name = cliDataUsr[i].cliente.toLowerCase()
+        var cod = String(cliDataUsr[i].cod_cliente)
+        var ges = String(cliDataUsr[i].gestor).toLowerCase()
+        var comercial = String(cliDataUsr[i].nombrecomercial).toLowerCase()
+        var qWeek = cliDataUsr[i].semana
+        var qDay = cliDataUsr[i].dia
+        if (qWeek.includes(week)) {
+            
+            if (qDay.includes(day)) {
+
+                if (esSupr == 1) {
+
+                    if (name.includes(value) || cod.includes(value) || ges.includes(value) || comercial.includes(value)) {
+                        filteredDataCli.push(cliDataUsr[i])
+                    }
+                } else {
+                    if (name.includes(value) || cod.includes(value) || comercial.includes(value)) {
+                        filteredDataCli.push(cliDataUsr[i])
+                    }
+                }
+            }
+        }
+    }
+    tmp = 0;
+    CliTable(filteredDataCli, variableTwo, search, tmp);
 }
