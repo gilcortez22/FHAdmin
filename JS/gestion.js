@@ -2,6 +2,9 @@
 let updStr = "";
 var CodCliente = location.search.substring(1);
 CodCliente = CodCliente.split('=')[1];
+CodCliente = CodCliente.split('/')[0];
+var Codgestor = location.search.substring(1);
+Codgestor = Codgestor.split('/')[1];
 let DataTipi = [];
 let DataCall = [];
 let DataActualiza = [];
@@ -45,6 +48,7 @@ $(document).ready(function () {
 
 
     getTipis();
+    getVisita(CodCliente);
     loadDataClientes();
     loadLlamadas(CodCliente);
     loadActualizarDatos(CodCliente);
@@ -62,6 +66,21 @@ function getTipis() {
     $.get(URI + 'GetTipi', function (response, status) {
         DataTipi = JSON.parse(JSON.stringify(response));
         loadTipis();
+    });
+}
+
+
+function getVisita(codCliente) {
+    $.get(URI + 'GetVisita', function (response, status) {
+
+        DataVisita = JSON.parse(JSON.stringify(response));
+        for (var i = 0; i < DataVisita.length; i++) {
+            if (DataVisita[i].customerid == codCliente) {
+                document.getElementById('lblFecVisita').innerHTML = DataVisita[0].fecha.split('T')[0];
+                document.getElementById('lblNovedad').innerHTML = "Pendiente";
+                document.getElementById("txtComent").value = DataVisita[0].newness;
+            }
+        }
     });
 }
 
@@ -291,7 +310,7 @@ function RegCall(codCli) {
             //si ha cambiado actualizar
         }
     } else {
-        let DataActualiza = [{ codCliente: codCli, tipificacion: vTipificacion, subtipificacion: vSubtipificacion, detalle: vDetalle, reclamo: vReclamo, pedido: vPedido, cobro: vCobro, fecprompag: vFecpago, CSATV: vCSATV, CSATE: vCSATE, probCompra: vProbCompra }];
+        let DataActualiza = [{ codCliente: codCli, tipificacion: vTipificacion, subtipificacion: vSubtipificacion, detalle: vDetalle, reclamo: vReclamo, pedido: vPedido, cobro: vCobro, fecprompag: vFecpago, CSATV: vCSATV, CSATE: vCSATE, probCompra: vProbCompra, plugestor: Codgestor }];
         $.ajax({
             type: 'POST',
             url: URI + 'InsertCall',
@@ -384,17 +403,16 @@ function ValidarContacto(objUpd, qfield, jfield) {
         }
     }
     console.log(strcontactos)
-        return strcontactos;
+    return strcontactos;
 }
 function updContacto(codCli) {
     console.log(DataActualiza);
 
     var updCntc = "";
-
-    updCntc += ValidarContacto('updTel', 'telefono', DataActualiza[0].telefono);
-    updCntc += ValidarContacto('updCel', 'celular', DataActualiza[0].celular);
-    updCntc += ValidarContacto('updMail', 'correo', DataActualiza[0].correo);
-    updCntc += ValidarContacto('updDir', 'direccion', DataActualiza[0].direccion);
+    if (DataActualiza[0].telefono === undefined) { } else {updCntc += ValidarContacto('updTel', 'telefono', DataActualiza[0].telefono);}
+    if (DataActualiza[0].celular === undefined) { } else {updCntc += ValidarContacto('updCel', 'celular', DataActualiza[0].celular);}
+    if (DataActualiza[0].correo === undefined) { } else {updCntc += ValidarContacto('updMail', 'correo', DataActualiza[0].correo);}
+    if (DataActualiza[0].direccion === undefined) { } else {updCntc += ValidarContacto('updDir', 'direccion', DataActualiza[0].direccion);}
 
     updCntc += ` Where codigo = ${codCli}`;
 

@@ -13,6 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -43,7 +45,8 @@
 
   <form class="form-inline d-flex justify-content-center md-form form-sm" autocomplete="off">
     <input class="form-control form-control-sm mr-3 w-75" type="text" id="search" placeholder="Buscar Cliente" aria-label="Search">
-    <i class="fas fa-search" aria-hidden="true"></i>
+    <i class="fas fa-search" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    <button class="btn btn-success btn-md" type="button" id = "visitado"><i class="fa fa-home"></i>visitado</button>
     <div id ="ddl"></div>
   </form>
   <div class="container-fluid" id="container">
@@ -53,7 +56,7 @@
   <div>
     <form class="form-inline d-flex justify-content-center md-form form-sm" autocomplete="off">
       <input class="form-control form-control-sm mr-3 w-75" type="text" id="search2" placeholder="Buscar Producto" aria-label="Search">
-      <i class="fas fa-search" aria-hidden="true"></i>
+      <i class="fas fa-search" aria-hidden="true" id ="lupsearch2"></i>
     </form>
   </div>
   <div class="container-fluid" id="container2">

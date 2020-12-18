@@ -16,6 +16,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"> </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -73,13 +75,13 @@
         <h4>
           <span class="badge badge-primary">Datos Visita </span>
         </h4>
-        <div class="row"><strong><label class="font-weight-bold">Dia de Visita:</label></strong></div>
-        <div class="row"><label id="lblCodCliente"></label></div>
-        <div class="row"><strong><label class="font-weight-bold">Estado de Visita:</label>Pedido pendiente de entrega</strong></div>
-        <div class="row"><label id="lblNomCliente"></label></div>
+        <div class="row"><strong><label class="font-weight-bold">Fecha de Visita:</label></strong></div>
+        <div class="row"><label id="lblFecVisita"></label></div>
+        <div class="row"><strong><label class="font-weight-bold">Estado de Visita:</label></strong></div>
+        <div class="row"><label id="lblNovedad"></label></div>
         <div class="row"><strong><label class="font-weight-bold">Comentario de Visita:</label></strong></div>
         <div class="row">
-          <textarea id="txtCom" class="form-control rounded-0" id="exampleFormControlTextarea1" rows="10">Cliente expresa que sigue esperando pedido de la semana pasada.</textarea>
+          <textarea id="txtComent" class="form-control rounded-0" rows="10"></textarea>
         </div>
 
 
