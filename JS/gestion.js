@@ -13,7 +13,7 @@ var URI = "http://localhost:3000/";
 //var URI = "http://192.168.0.250:3000/";
 
 $(document).ready(function () {
-console.log("hostname: ", self.location.host);
+// console.log("hostname: ", self.location.host);
     /* $('#chkCobro').click(function () {
          if ($(this).is(':checked')) {
              $('#fecPago').attr('readonly', true)

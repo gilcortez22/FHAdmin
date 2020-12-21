@@ -92,14 +92,15 @@ $(document).ready(function () {
     })
 
     $(document).on('click', '#visitado', function () {
+        var selectedButton = $(this);
 
         if (tmpV % 2 == 0) {
             visitado = 'SiNo'
             tmpV += 1;
-
+            selectedButton.removeClass('btn btn-success btn-md').addClass('btn btn-light btn-md');
         } else {
             visitado = 'Si'
-
+            selectedButton.removeClass('btn btn-light btn-md').addClass('btn btn-success btn-md');
             tmpV += 1;
 
         }

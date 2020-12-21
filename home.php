@@ -26,22 +26,16 @@
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark" Style="background-color:#ea6224; font-family: inherit;">
-
-    <!-- Navbar brand -->
-    <Strong><a class="navbar-brand" href="#">Funes Hartmann</a></Strong>
-
-    <!-- Collapse button -->
-    <button class="navbar-toggler" type="button" data-target="#basicExampleNav" aria-label="Toggle navigation">
-    </button>
-
-    <div class="ml-auto">
+<nav class="navbar navbar-expand-lg navbar-dark" Style="background-color:#ea6224; font-family: inherit;">
+  <a class="navbar-brand" href="#">Funes Hartmann</a>
+  <div class="ml-auto">
       <form method="post" action="index.php">
         <input type="submit" class="btn btn-primary btn-sm" name="btnCerrar" value="Cerrar Sesion">
       </form>
     </div>
 
-  </nav>
+</nav>
+
 
   <form class="form-inline d-flex justify-content-center md-form form-sm" autocomplete="off">
     <input class="form-control form-control-sm mr-3 w-75" type="text" id="search" placeholder="Buscar Cliente" aria-label="Search">
