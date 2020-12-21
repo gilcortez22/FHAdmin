@@ -13,7 +13,7 @@ var URI = "http://localhost:3000/";
 //var URI = "http://192.168.0.250:3000/";
 
 $(document).ready(function () {
-
+console.log("hostname: ", self.location.host);
     /* $('#chkCobro').click(function () {
          if ($(this).is(':checked')) {
              $('#fecPago').attr('readonly', true)
@@ -54,8 +54,8 @@ $(document).ready(function () {
     loadActualizarDatos(CodCliente);
 
     $(document).on('click', '#registrar', function () {
-        updContacto(CodCliente);
         RegCall(CodCliente);
+        updContacto(CodCliente);
         location.reload();
     });
 
@@ -69,16 +69,17 @@ function getTipis() {
     });
 }
 
-
 function getVisita(codCliente) {
     $.get(URI + 'GetVisita', function (response, status) {
 
         DataVisita = JSON.parse(JSON.stringify(response));
         for (var i = 0; i < DataVisita.length; i++) {
-            if (DataVisita[i].customerid == codCliente) {
-                document.getElementById('lblFecVisita').innerHTML = DataVisita[0].fecha.split('T')[0];
+            
+            if (DataVisita[i].cod_cliente == codCliente) {
+                console.log(DataVisita)
+                    document.getElementById('lblFecVisita').innerHTML = DataVisita[i].fecha.split('T')[0];
                 document.getElementById('lblNovedad').innerHTML = "Pendiente";
-                document.getElementById("txtComent").value = DataVisita[0].newness;
+                document.getElementById("txtComent").value = DataVisita[i].newness;
             }
         }
     });
@@ -421,7 +422,7 @@ function updContacto(codCli) {
         type: 'POST',
         url: URI + 'UpdCont',
         crossDomain: true,
-        data: { search: updCntc },
+        data: {search: updCntc},
         dataType: 'json',
         success: function (response) {
             //respuesta = JSON.parse(JSON.stringify(response));\

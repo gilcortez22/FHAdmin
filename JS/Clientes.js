@@ -22,6 +22,11 @@ var esSupr = 0;
 let value = "";
 var tmpV = 0;
 var visitado = "Si";
+
+function validarURL() {
+    URI = "";
+}
+
 $(document).ready(function () {
     showDdl();
     //mutear enter key
@@ -182,11 +187,8 @@ $(document).on('click', '#ver', function () {
     CliTable(cliDataUsr, id, tmp);
 
     loadProductos(id);
-
-    ;
     //       $('#container2').html(template2);
     hidesearch();
-
 });
 
 
@@ -205,6 +207,32 @@ function hidesearch() {
     };
 };
 
+function dibujarTblCli(usrs, i,ver,regresar) {
+    template += `<tr codTienda="${usrs[i].cod_cliente}">`
+    if (esSupr == 1) {
+        template += `<td>${usrs[i].gestor}</td>`;
+    }
+    if (usrs[i].visitado == 'Si') {
+        template += `<td>${usrs[i].cod_cliente}&nbsp;<i class="fas fa-home" style="color:green;"></i></td> `
+    } else {
+        template += `<td>${usrs[i].cod_cliente}&nbsp;<i class="fas fa-home"></i></td> `
+    }
+    template += `<td>${usrs[i].cliente}</td>
+    <td>${usrs[i].nombrecomercial}</td>
+    <td>${usrs[i].ultima_vta.split('T')[0]}</td>
+    <td>
+        <div class = "row">
+        <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" ${regresar}>Productos</button></div>
+        <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar" ${ver}>Regresar</button></div>`;
+    if (esSupr == 1) {
+        template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
+    }
+    template +=
+        `</div>
+                        </td>
+                        </tr>`;
+    itmCount = itmCount + 1;
+}
 
 function CliTable(usrs, search, tmp) {
     template = '';
@@ -212,70 +240,13 @@ function CliTable(usrs, search, tmp) {
     itmCount = 0;
     for (var i = 0; i < usrs.length; i++) {
         if (tmp == 0) {
-            template += `<tr codTienda="${usrs[i].cod_cliente}">`
-            if (esSupr == 1) {
-                template += `<td>${usrs[i].gestor}</td>`;
-            }
-            if (esSupr == 1) {
-                if (usrs[i].visitado == 'Si') {
-                    template += `<td>${usrs[i].cod_cliente}&nbsp;<i class="fas fa-home" style="color:green;"></i></td> `
-                } else {
-                    template += `<td>${usrs[i].cod_cliente}&nbsp;<i class="fas fa-home"></i></td> `
-                }
-
-            } else {
-                template += `<td>${usrs[i].cod_cliente}</td> `
-            }
-            template += `<td>${usrs[i].cliente}</td>
-            <td>${usrs[i].nombrecomercial}</td>
-        <td>${usrs[i].ultima_vta.split('T')[0]}</td>
-        <td>
-                <div class = "row">
-                <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver">Productos</button></div>
-                <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar" disabled>Regresar</button></div>`;
-            if (esSupr == 1) {
-                template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
-            }
-            template +=
-                `</div>
-                </td>
-                </tr>`;
             document.getElementById("search").disabled = false;
-            itmCount = itmCount + 1;
-            if (i === 5 && esSupr == 0) { break; }
+            dibujarTblCli(usrs, i,'disabled','')
         } else {
             if (parseInt(usrs[i].cod_cliente) == parseInt(search)) {
-
-                template += `<tr codTienda="${usrs[i].cod_cliente}">`
-                if (esSupr == 1) {
-                    template += `<td>${usrs[i].gestor}</td>`;
-                }
-                if (esSupr == 1 && usrs[i].visitado == 'Si') {
-                    template += `<td>${usrs[i].cod_cliente}&nbsp;<i class="fas fa-home"></i></td> `
-
-                } else {
-                    template += `<td>${usrs[i].cod_cliente}</td> `
-                }
-                template += `<td>${usrs[i].cliente}</td>
-                <td>${usrs[i].nombrecomercial}</td>
-                <td>${usrs[i].ultima_vta.split('T')[0]}</td>
-                <td>
-                <div class = "row">
-                <div class = "col"><button class="btn btn-sm btn-success btn-block" type="button" id="ver" disabled>Productos</button></div>
-                <div class = "col"><button class="btn btn-sm btn-danger btn-block" type="button" onclick="myFunctionb()" id="regresar">Regresar</button></div>`;
-                if (esSupr == 1) {
-                    template += `<div class = "col"><button class="btn btn-sm btn-warning btn-block" type="button" id="gestionar">Gestionar</button></div>`;
-                }
-                template +=
-                    `</div>
-                </td>
-                </tr>`;
-
-                document.getElementById("search").disabled = true;
-                itmCount = itmCount + 1;
-                if (i === 5 && esSupr == 0) { break; }
+                dibujarTblCli(usrs, i,'', 'disabled')
             }
-
+            document.getElementById("search").disabled = true;
         };
     };
     template += `</table>`
@@ -341,7 +312,7 @@ function myFunctionb() {
     $('#container').html(template);
     $('#container2').html("");
     document.getElementById("search2").value = "";
-
+    
     hidesearch();
 };
 
@@ -417,13 +388,17 @@ function getDia() {
     weekday[3] = "Miercoles";
     weekday[4] = "Jueves";
     weekday[5] = "Viernes";
+    weekday[0] = "";
+    weekday[6] = "";
+    weekday[7] = "";
 
-   return selectedD = weekday[d.getDay()];
+
+    return selectedD = weekday[d.getDay()];
 };
 
 
 function showDdl() {
-    var dia= getDia();
+    var dia = getDia();
     var semana = getSemana();
     templateDdl = `
     <select class="browser-default custom-select" id ="ddlSemana">
@@ -452,7 +427,6 @@ function recorrerJSON(cliDataUsr) {
     week = selectedW.toUpperCase();
     day = selectedD.toUpperCase();
     for (var i = 0; i < cliDataUsr.length; i++) {
-
         var name = cliDataUsr[i].cliente.toLowerCase()
         var cod = String(cliDataUsr[i].cod_cliente)
         var ges = String(cliDataUsr[i].gestor).toLowerCase()
@@ -460,11 +434,9 @@ function recorrerJSON(cliDataUsr) {
         var qWeek = cliDataUsr[i].semana
         var qDay = cliDataUsr[i].dia
         if (visitado.includes(cliDataUsr[i].visitado)) {
-            
-       // console.log(visitado, cliDataUsr[i].visitado)
-       
+            // console.log(visitado, cliDataUsr[i].visitado)
             if (qWeek.includes(week)) {
-                
+
                 if (qDay.includes(day)) {
                     if (esSupr == 1) {
 
@@ -476,11 +448,10 @@ function recorrerJSON(cliDataUsr) {
                             filteredDataCli.push(cliDataUsr[i])
                         }
                     }
-                } 
-            } 
-        } 
+                }
+            }
+        }
     }
-    console.log (filteredDataCli)   
     tmp = 0;
     CliTable(filteredDataCli, variableTwo, search, tmp);
 }

@@ -3,18 +3,25 @@ let app = express()
 let Sybase = require("sybase")
 let bodyParser = require("body-parser")
 
-let db = new Sybase("127.0.0.1", 2638, "admin3", "gilberto", "sql");
+let db = new Sybase("192.168.0.233", 2638, "FH", "gilberto", "sql");
 //let db = new Sybase("192.168.0.233", 2638, "FH", "gilberto", "sql");
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
+try
+{
 db.connect(error => {
   if (error) throw error;
   console.log("Conecta");
 
 });
+
+}
+catch(e){
+  console.log("No Conecta"); 
+};
 
 app.get("/Login", (request, response) => {
   response.header('Access-Control-Allow-Origin', '*');
@@ -236,7 +243,8 @@ app.get("/GetVisita", (request, response) => {
   response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   response.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
 
-  db.query(`select * from DBA.RUTEROVISITAS where date(fecha)=date(now())-1`, (error, data) => {
+  db.query(`select vis.*, cl.cod_cliente from DBA.RUTEROVISITAS vis join tbl_clientes cl on vis.customerid = cl.plucliente 
+  where date(fecha)=date(now())-1`, (error, data) => {
     if (error) throw error;
     response.json(data)
   });
